@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PinkStock - Gestão de Vendas & Estoque</title>
+    <style>
+        /* ==========================================
+           1. RESET & ESTILOS BASE (TEMA ROSA)
+           ========================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #fff0f5; /* Lavender Blush (Rosa bem clarinho) */
+            color: #4a1525; /* Vinho escuro para excelente contraste e leitura */
+            padding: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            margin-bottom: 30px;
+            border-bottom: 2px solid #fbcfe8;
+            padding-bottom: 15px;
+        }
+
+        h1 {
+            color: #9d174d; /* Rosa Escuro/Carmim */
+            font-size: 24pt;
+        }
+
+        p.subtitle {
+            color: #be185d;
+            font-size: 11pt;
+            margin-top: 5px;
+        }
+
+        /* ==========================================
+           2. LAYOUT EM COLUNAS
+           ========================================== */
+        .dashboard-grid {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+            border-collapse: separate;
+            border-spacing: 15px 0;
+            margin-bottom: 30px;
+        }
+
+        .dashboard-col {
+            display: table-cell;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(219, 39, 119, 0.1);
+            vertical-align: top;
+            border-top: 4px solid #f472b6; /* Detalhe rosa no topo */
+        }
+
+        .stat-value {
+            font-size: 18pt;
+            font-weight: bold;
+            color: #db2777; /* Rosa Vibrante */
+            margin-top: 10px;
+        }
+
+        .stat-label {
+            font-size: 9pt;
+            text-transform: uppercase;
+            color: #9d174d;
+            letter-spacing: 0.5px;
+        }
+
+        /* Estrutura principal: Form na esquerda, Tabela na direita */
+        .main-container {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+            border-collapse: separate;
+            border-spacing: 20px 0;
+        }
+
+        .side-panel {
+            display: table-cell;
+            width: 35%;
+            vertical-align: top;
+        }
+
+        .content-panel {
+            display: table-cell;
+            width: 65%;
+            vertical-align: top;
+        }
+
+        .card {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(219, 39, 119, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 12pt;
+            font-weight: bold;
+            color: #9d174d;
+            margin-bottom: 15px;
+            border-left: 4px solid #db2777;
+            padding-left: 8px;
+        }
+
+        /* ==========================================
+           3. FORMULÁRIOS
+           ========================================== */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-size: 9.5pt;
+            font-weight: 500;
+            color: #851c41;
+            margin-bottom: 5px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #fbcfe8;
+            border-radius: 6px;
+            font-size: 10pt;
+            background-color: #fffbfd;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #db2777;
+            box-shadow: 0 0 0 3px rgba(219, 39, 119, 0.15);
+        }
+
+        .btn {
+            background-color: #db2777;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            font-size: 10pt;
+            transition: background-color 0.2s;
+        }
+
+        .btn:hover {
+            background-color: #be185d;
+        }
+
+        .btn-secondary {
+            background-color: #f472b6;
+            margin-top: 10px;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e8539e;
+        }
+
+        /* ==========================================
+           4. TABELAS DE DADOS
+           ========================================== */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 10pt;
+        }
+
+        th {
+            background-color: #fdf2f8;
+            color: #9d174d;
+            font-weight: 600;
+            text-align: left;
+            padding: 12px;
+            border-bottom: 2px solid #fbcfe8;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #fce7f3;
+            color: #4a1525;
+        }
+
+        tr:hover {
+            background-color: #fff5f9;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 8pt;
+            font-weight: bold;
+        }
+
+        .badge-success {
+            background-color: #fbcfe8;
+            color: #9d174d;
+        }
+
+        .badge-danger {
+            background-color: #ffe4e6;
+            color: #b91c1c;
+        }
+
+        .btn-delete {
+            background-color: #f43f5e;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 8.5pt;
+        }
+
+        .btn-delete:hover {
+            background-color: #e11d48;
+        }
+
+        #frete-resultado {
+            margin-top: 15px;
+            padding: 12px;
+            background-color: #fff1f2;
+            border: 1px dashed #fecdd3;
+            border-radius: 6px;
+            display: none;
+            font-size: 9.5pt;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>PinkStock</h1>
+        <p class="subtitle">Meu estoque de vendas com controle de custos, lucros e simulação de frete</p>
+    </header>
+
+    <!-- Painel de Métricas (Dashboard) -->
+    <div class="dashboard-grid">
+        <div class="dashboard-col" style="border-top-color: #f472b6;">
+            <div class="stat-label">Custo Total Investido</div>
+            <div class="stat-value" id="total-custo" style="color: #6b7280;">R$ 0,00</div>
+        </div>
+        <div class="dashboard-col" style="border-top-color: #ec4899;">
+            <div class="stat-label">Faturamento Estimado</div>
+            <div class="stat-value" id="total-venda" style="color: #db2777;">R$ 0,00</div>
+        </div>
+        <div class="dashboard-col" style="border-top-color: #10b981;">
+            <div class="stat-label">Lucro Estimado Total</div>
+            <div class="stat-value" id="total-lucro" style="color: #059669;">R$ 0,00</div>
+        </div>
+        <div class="dashboard-col" style="border-top-color: #f472b6;">
+            <div class="stat-label">Total de Unidades</div>
+            <div class="stat-value" id="total-itens" style="color: #9d174d;">0</div>
+        </div>
+    </div>
+
+    <!-- Container Principal -->
+    <div class="main-container">
+        
+        <!-- Painel Lateral: Cadastro e Frete -->
+        <div class="side-panel">
+            
+            <!-- Formulário de Cadastro -->
+            <div class="card">
+                <div class="card-title">Novo Item de Venda</div>
+                <form id="produto-form">
+                    <div class="form-group">
+                        <label for="nome">Nome do Produto</label>
+                        <input type="text" id="nome" required placeholder="Ex: Batom Matte Coral">
+                    </div>
+                    <div class="form-group">
+                        <label for="preco-custo">Preço de Custo (Quanto paguei R$)</label>
+                        <input type="number" id="preco-custo" step="0.01" required placeholder="0.00">
+                    </div>
+                    <div class="form-group">
+                        <label for="preco-venda">Preço de Venda (Irei vender por R$)</label>
+                        <input type="number" id="preco-venda" step="0.01" required placeholder="0.00">
+                    </div>
+                    <div class="form-group">
+                        <label for="quantidade">Quantidade</label>
+                        <input type="number" id="quantidade" required placeholder="Ex: 5">
+                    </div>
+                    <div class="form-group">
+                        <label for="peso">Peso (kg) <small>(para cálculo de frete)</small></label>
+                        <input type="number" id="peso" step="0.01" required placeholder="Ex: 0.1">
+                    </div>
+                    <button type="submit" class="btn">Cadastrar Produto</button>
+                </form>
+            </div>
+
+            <!-- Formulário de Frete -->
+            <div class="card">
+                <div class="card-title">Calcular Frete de Envio</div>
+                <div class="form-group">
+                    <label for="frete-produto">Selecione o Produto</label>
+                    <select id="frete-produto">
+                        <option value="">Selecione...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="cep">CEP do Cliente</label>
+                    <input type="text" id="cep" maxlength="8" placeholder="Ex: 01310100">
+                </div>
+                <button type="button" id="btn-calcular-frete" class="btn btn-secondary">Calcular Frete</button>
+                
+                <div id="frete-resultado"></div>
+            </div>
+
+        </div>
+
+        <!-- Painel de Conteúdo: Tabela de Produtos -->
+        <div class="content-panel">
+            <div class="card" style="min-height: 480px;">
+                <div class="card-title">Meus Produtos em Estoque</div>
+                <table id="produtos-tabela">
+                    <thead>
+                        <tr>
+                            <th>Produto</th>
+                            <th>Paguei (Custo)</th>
+                            <th>Vendo por</th>
+                            <th>Qtd</th>
+                            <th>Margem / Lucro</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="produtos-lista">
+                        <!-- Gerado dinamicamente via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ==========================================
+       5. COMPORTAMENTO E LÓGICA (JAVASCRIPT)
+       ========================================== -->
+    <script>
+        // "Banco de dados" local atualizado para suportar preço de custo e venda
+        let estoque = JSON.parse(localStorage.getItem('pinkstock_inventario')) || [];
+
+        // Referências DOM
+        const produtoForm = document.getElementById('produto-form');
+        const produtosLista = document.getElementById('produtos-lista');
+        const selectProdutosFrete = document.getElementById('frete-produto');
+        
+        // Elementos do Dashboard
+        const totalCustoEl = document.getElementById('total-custo');
+        const totalVendaEl = document.getElementById('total-venda');
+        const totalLucroEl = document.getElementById('total-lucro');
+        const totalItensEl = document.getElementById('total-itens');
+
+        function iniciar() {
+            renderizarTabela();
+            atualizarDashboard();
+            atualizarSelectFrete();
+        }
+
+        // Atualiza as métricas financeiras do topo
+        function atualizarDashboard() {
+            // Custo Total = Preço de Custo x Quantidade
+            const totalCusto = estoque.reduce((sum, p) => sum + (Number(p.precoCusto) * Number(p.quantidade)), 0);
+            
+            // Faturamento Estimado = Preço de Venda x Quantidade
+            const totalVenda = estoque.reduce((sum, p) => sum + (Number(p.precoVenda) * Number(p.quantidade)), 0);
+            
+            // Lucro Estimado = Faturamento - Custo
+            const totalLucro = totalVenda - totalCusto;
+            
+            // Unidades Totais em Estoque
+            const totalItens = estoque.reduce((sum, p) => sum + Number(p.quantidade), 0);
+
+            // Formatação de valores
+            totalCustoEl.textContent = totalCusto.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            totalVendaEl.textContent = totalVenda.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            totalLucroEl.textContent = totalLucro.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            totalItensEl.textContent = totalItens;
+        }
+
+        // Renderiza as linhas dos produtos cadastrados
+        function renderizarTabela() {
+            produtosLista.innerHTML = '';
+
+            estoque.forEach((produto, index) => {
+                const tr = document.createElement('tr');
+                
+                // Cálculo de Lucro Unitário e Margem de Lucro por produto
+                const lucroUnitario = produto.precoVenda - produto.precoCusto;
+                const lucroTotalItem = lucroUnitario * produto.quantidade;
+                const margemPorcentagem = ((lucroUnitario / produto.precoCusto) * 100).toFixed(0);
+
+                tr.innerHTML = `
+                    <td><strong>${produto.nome}</strong><br><small style="color: #be185d;">${produto.peso} kg</small></td>
+                    <td style="color: #6b7280;">R$ ${Number(produto.precoCusto).toFixed(2)}</td>
+                    <td style="color: #db2777; font-weight: bold;">R$ ${Number(produto.precoVenda).toFixed(2)}</td>
+                    <td>${produto.quantidade} un</td>
+                    <td>
+                        <span style="color: #059669; font-weight: bold;">+R$ ${lucroTotalItem.toFixed(2)}</span><br>
+                        <small style="color: #059669;">(${margemPorcentagem}% margem)</small>
+                    </td>
+                    <td>
+                        <button class="btn-delete" onclick="removerProduto(${index})">Remover</button>
+                    </td>
+                `;
+                produtosLista.appendChild(tr);
+            });
+        }
+
+        // Atualiza os produtos disponíveis para simular frete
+        function atualizarSelectFrete() {
+            selectProdutosFrete.innerHTML = '<option value="">Selecione...</option>';
+            estoque.forEach((produto, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = `${produto.nome} (${produto.peso} kg)`;
+                selectProdutosFrete.appendChild(option);
+            });
+        }
+
+        function salvarDados() {
+            localStorage.setItem('pinkstock_inventario', JSON.stringify(estoque));
+        }
+
+        // Adiciona novo produto
+        produtoForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const precoCusto = parseFloat(document.getElementById('preco-custo').value);
+            const precoVenda = parseFloat(document.getElementById('preco-venda').value);
+
+            if (precoVenda < precoCusto) {
+                if(!confirm("Atenção: O preço de venda é menor que o preço de custo. Você terá prejuízo neste item. Deseja cadastrar mesmo assim?")) {
+                    return;
+                }
+            }
+
+            const novoItem = {
+                nome: document.getElementById('nome').value,
+                precoCusto: precoCusto,
+                precoVenda: precoVenda,
+                quantidade: parseInt(document.getElementById('quantidade').value),
+                peso: parseFloat(document.getElementById('peso').value)
+            };
+
+            estoque.push(novoItem);
+            salvarDados();
+            iniciar();
+
+            produtoForm.reset();
+        });
+
+        // Remove item do estoque
+        window.removerProduto = function(index) {
+            estoque.splice(index, 1);
+            salvarDados();
+            iniciar();
+        };
+
+        // Simulação de Frete integrada com a API ViaCEP
+        document.getElementById('btn-calcular-frete').addEventListener('click', async function() {
+            const indexProduto = selectProdutosFrete.value;
+            const cep = document.getElementById('cep').value.trim().replace(/\D/g, '');
+            const resultadoBox = document.getElementById('frete-resultado');
+
+            if (!indexProduto) {
+                alert('Por favor, selecione um produto.');
+                return;
+            }
+            if (cep.length !== 8) {
+                alert('Por favor, insira um CEP de 8 dígitos.');
+                return;
+            }
+
+            resultadoBox.style.display = 'block';
+            resultadoBox.innerHTML = 'Calculando frete...';
+
+            try {
+                const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+                const dadosCep = await response.json();
+
+                if (dadosCep.erro) {
+                    resultadoBox.innerHTML = '<span style="color: #f43f5e;">CEP não encontrado!</span>';
+                    return;
+                }
+
+                const produto = estoque[indexProduto];
+                let freteBase = 12.00; // Taxa padrão de envio local
+                
+                if (dadosCep.uf !== 'SP') {
+                    freteBase = 26.90; // Taxa interestadual
+                }
+
+                const custoFrete = freteBase + (produto.peso * 4.00);
+
+                resultadoBox.innerHTML = `
+                    <strong>Destino:</strong> ${dadosCep.localidade} - ${dadosCep.uf}<br>
+                    <strong>Bairro:</strong> ${dadosCep.bairro || 'Não informado'}<br>
+                    <strong>Custo Estimado:</strong> R$ ${custoFrete.toFixed(2)}<br>
+                    <small style="color: #be185d;">(Peso: ${produto.peso} kg)</small>
+                `;
+
+            } catch (error) {
+                resultadoBox.innerHTML = '<span style="color: #f43f5e;">Erro ao conectar ao serviço de CEP.</span>';
+            }
+        });
+
+        // Inicia a aplicação
+        iniciar();
+    </script>
+</body>
+</html>
